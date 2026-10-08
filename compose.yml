@@ -31,6 +31,7 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
+
   postgres:
     image: postgres:17-alpine
     environment:
@@ -51,6 +52,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
   keycloak:
     image: quay.io/keycloak/keycloak:26.5
     environment:
@@ -82,8 +84,10 @@ services:
       timeout: 5s
       retries: 30
       start_period: 30s
+
 volumes:
   postgres_data:
+
 secrets:
   maven_settings:
     file: ${MAVEN_SETTINGS_FILE:?Set the Maven settings.xml path}

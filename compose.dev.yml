@@ -1,37 +1,37 @@
 services:
   identity-service:
-    container_name: identity-service-dev
+    container_name: identity-dev
     environment:
       SPRING_PROFILES_ACTIVE: dev
-    ports:
-      - "127.0.0.1:${SERVER_PORT:-8082}:8082"
-  postgres:
-    ports:
-      - "127.0.0.1:${DB_PORT:-5433}:5432"
-  keycloak:
-    command: start-dev --import-realm
-    ports:
-      - "127.0.0.1:5443:8080"
-  mailpit:
-    image: axllent/mailpit:latest
-    ports:
-      - "127.0.0.1:1025:1025"
-      - "127.0.0.1:8025:8025"
-  sonarqube: #    psw = Zoology0-Emphasize-Keenly
-    image: sonarqube:community
-    profiles: [quality]
-    environment:
-      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
-    ports:
-      - "127.0.0.1:9000:9000"
-    volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
-volumes:
-  sonarqube_data:
-  sonarqube_extensions:
+    networks:
+      - default
+      - edge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.identity.rule=Host(`identity.tonino.localhost`)"
+      - "traefik.http.routers.identity.entrypoints=web"
+      - "traefik.http.services.identity.loadbalancer.server.port=8082"
+      - "traefik.docker.network=tonino-edge"
 
+  postgres:
+    container_name: pg-dev
+    ports:
+      - "5433:5432"
+
+  keycloak:
+    container_name: kc-dev
+    command: start-dev --import-realm
+    networks:
+      - default
+      - edge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.identity-keycloak.rule=Host(`auth.tonino.localhost`)"
+      - "traefik.http.routers.identity-keycloak.entrypoints=web"
+      - "traefik.http.services.identity-keycloak.loadbalancer.server.port=8080"
+      - "traefik.docker.network=tonino-edge"
+
+networks:
+  edge:
+    external: true
+    name: tonino-edge
