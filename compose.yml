@@ -1,5 +1,5 @@
 # Combine with compose.dev.yml or compose.prod.yml and the matching --env-file.
-name: tonino-platform-${SPRING_PROFILES_ACTIVE:?Select dev or prod}
+name: tonino-identity-${SPRING_PROFILES_ACTIVE:?Select dev or prod}
 services:
   identity-service:
     image: identity-service:1.0.0

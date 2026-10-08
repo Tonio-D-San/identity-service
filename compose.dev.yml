@@ -1,6 +1,6 @@
 services:
   identity-service:
-    container_name: identity-service-dev
+    container_name: identity-dev
     environment:
       SPRING_PROFILES_ACTIVE: dev
     ports:
